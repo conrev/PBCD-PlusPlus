@@ -31,4 +31,8 @@
 *.swo
 *.swp
 
+# Out Of Source Build Files
 build/*
+
+# VSCode Data
+settings.json

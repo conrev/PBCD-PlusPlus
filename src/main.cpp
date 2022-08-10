@@ -88,10 +88,6 @@ bool key_down(igl::opengl::glfw::Viewer &viewer, unsigned char key, int mods)
   recompute = true;
   switch (key)
   {
-  case 'D':
-  case 'd':
-    use_dqs = !use_dqs;
-    return true;
   case ' ':
     viewer.core().is_animating = !viewer.core().is_animating;
     return true;
@@ -135,7 +131,6 @@ int main(int argc, char *argv[])
   viewer.core().camera_zoom = 2.5;
   viewer.core().animation_max_fps = 60.;
   viewer.core().background_color.setOnes();
-  cout << "Press [d] to toggle between LBS and DQS" << endl
-       << "Press [space] to toggle animation" << endl;
+  cout << "Press [space] to toggle animation" << endl;
   viewer.launch();
 }

@@ -35,3 +35,4 @@ build/*
 
 # VSCode Data
 settings.json
+.vscode

@@ -16,6 +16,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "pbcd/DeformableModel.hpp"
+
 typedef std::vector<Eigen::Quaterniond, Eigen::aligned_allocator<Eigen::Quaterniond>>
     RotationList;
 
@@ -26,7 +28,6 @@ Eigen::VectorXi P;
 std::vector<RotationList> poses;
 double anim_t = 0.0;
 double anim_t_dir = 0.015;
-bool use_dqs = false;
 bool recompute = true;
 
 bool pre_draw(igl::opengl::glfw::Viewer &viewer)
@@ -99,6 +100,7 @@ int main(int argc, char *argv[])
 {
   using namespace Eigen;
   using namespace std;
+
   igl::readOBJ("../models/arm.obj", V, F);
   U = V;
   igl::readTGF("../models/arm.tgf", C, BE);
@@ -106,7 +108,9 @@ int main(int argc, char *argv[])
   igl::directed_edge_parents(BE, P);
   RotationList rest_pose;
   igl::directed_edge_orientations(C, BE, rest_pose);
-  cout << rest_pose.size();
+
+  pbcd::DeformableModel *body = new pbcd::DeformableModel(V, F, C, BE);
+
   poses.resize(4, RotationList(4, Quaterniond::Identity()));
   // poses[1] // twist
   const Quaterniond twist(AngleAxisd(igl::PI, Vector3d(1, 0, 0)));

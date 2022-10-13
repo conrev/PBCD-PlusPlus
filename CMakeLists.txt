@@ -5,6 +5,7 @@ list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Libigl
 option(LIBIGL_GLFW "Build target igl::glfw" ON)
+option(LIBIGL_COPYLEFT_TETGEN  "Build target igl_copyleft::tetgen" ON)
 include(libigl)
 
 # Add your project files
@@ -16,7 +17,8 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/DeformableModel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/Solver.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_link_libraries(${PROJECT_NAME} PUBLIC igl::glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC igl::glfw igl_copyleft::tetgen)

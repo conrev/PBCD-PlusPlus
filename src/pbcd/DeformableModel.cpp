@@ -1,42 +1,7 @@
 #include <pbcd/DeformableModel.hpp>
 
-#include <igl/deform_skeleton.h>
-#include <igl/directed_edge_parents.h>
-#include <igl/directed_edge_orientations.h>
-#include <igl/forward_kinematics.h>
-#include <igl/lbs_matrix.h>
-#include <iostream>
-
 namespace pbcd
 {
-
-    DeformableModel::DeformableModel()
-    {
-    }
-
-    DeformableModel::DeformableModel(
-        const Eigen::MatrixXd &V,
-        const Eigen::MatrixXi &F,
-        const Eigen::MatrixXd &C,
-        const Eigen::MatrixX2i &BE,
-        const Eigen::MatrixXd &W) : m_restVerts(V),
-                                    m_verts(V),
-                                    m_faces(F),
-                                    m_boneVerts(C),
-                                    m_boneEdges(BE),
-                                    m_vertWeights(W)
-    {
-        igl::directed_edge_parents(m_boneEdges, m_parentEdges);
-        igl::directed_edge_orientations(m_boneVerts, m_boneEdges, m_restPose);
-        igl::lbs_matrix(m_verts, m_vertWeights, m_LBSMatrix);
-    }
-
-    Eigen::MatrixXd &DeformableModel::positions() { return m_verts; }
-    Eigen::MatrixXi &DeformableModel::faces() { return m_faces; }
-    Eigen::MatrixXd &DeformableModel::bonePositions() { return m_boneVerts; }
-    Eigen::MatrixX2i &DeformableModel::boneEdges() { return m_boneEdges; }
-    std::vector<RotationList> &DeformableModel::poses() { return m_poses; }
-
     void DeformableModel::resetState()
     {
         m_verts = m_restVerts;
@@ -77,7 +42,11 @@ namespace pbcd
         // Also deform skeleton edges
         Eigen::MatrixXd CT;
         Eigen::MatrixXi BET;
+
         igl::deform_skeleton(m_boneVerts, m_boneEdges, T, CT, BET);
     }
 
+    void DeformableModel::tetrahedralize()
+    {
+    }
 }

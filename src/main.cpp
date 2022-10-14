@@ -44,11 +44,11 @@ bool pre_draw(igl::opengl::glfw::Viewer &viewer)
     timer.start();
 
     // body->playAnimationClip(clip, anim_t);
-
+    solve(*body, gravity, 0.01, 10, 10);
     if (viewer.core().is_animating)
     {
-      // cout << anim_t << endl;
-      solve(*body, gravity, 0.01, 10, 10);
+      // anim_t += anim_t_dir;
+      //  cout << anim_t << endl;
 
       viewer.data().set_vertices(body->positions());
       // viewer.data().set_edges(body->bonePositions(), body->boneEdges(), sea_green);
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
   RotationList rest_pose;
   igl::directed_edge_orientations(C, BE, rest_pose);
 
-  // string settings = "pq1.414Y";
-  // igl::copyleft::tetgen::tetrahedralize(V, F, "pq1.414", TV, TT, TF);
+  string settings = "pq1.414Y";
+  igl::copyleft::tetgen::tetrahedralize(V, F, "pq1.414", TV, TT, TF);
   // // // List of boundary indices (aka fixed value indices into VV)
   // VectorXi b;
   // // // List of boundary conditions of each weight function
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 
   igl::readDMAT("../models/arm-weights.dmat", W);
 
-  body = new pbcd::DeformableModel(V, F, C, BE, W);
+  body = new pbcd::DeformableModel(TV, TF, C, BE, W);
 
   gravity.resizeLike(body->positions());
   gravity.setZero();

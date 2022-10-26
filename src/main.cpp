@@ -13,6 +13,7 @@
 #include <igl/bbw.h>
 #include <igl/Timer.h>
 #include <igl/boundary_conditions.h>
+#include <igl/bfs_orient.h>
 
 #include <Eigen/Geometry>
 #include <Eigen/StdVector>
@@ -28,7 +29,7 @@ pbcd::DeformableModel *body;
 Eigen::MatrixXd gravity;
 Eigen::MatrixXd V, W, C, U, M, TV;
 Eigen::MatrixXi F, TF, TT, BE;
-Eigen::VectorXi P;
+Eigen::VectorXi P, Comps;
 pbcd::AnimationClip clip;
 double anim_t = 0.0;
 double anim_t_dir = 0.015;
@@ -43,11 +44,11 @@ bool pre_draw(igl::opengl::glfw::Viewer &viewer)
   {
     timer.start();
 
-    // body->playAnimationClip(clip, anim_t);
+    body->playAnimationClip(clip, anim_t);
     solve(*body, gravity, 0.01, 10, 10);
     if (viewer.core().is_animating)
     {
-      // anim_t += anim_t_dir;
+      anim_t += anim_t_dir;
       //  cout << anim_t << endl;
 
       viewer.data().set_vertices(body->positions());
@@ -58,6 +59,7 @@ bool pre_draw(igl::opengl::glfw::Viewer &viewer)
     {
       recompute = false;
     }
+    timer.stop();
   }
   return false;
 }
@@ -109,16 +111,20 @@ int main(int argc, char *argv[])
   // igl::normalize_row_sums(W, W);
   // cout << W << endl;
 
-  igl::readDMAT("../models/arm-weights.dmat", W);
+  std::cout << "Mesh Data: \n";
+  std::cout << "Vertices: " << TV.rows() << " vertices\n";
+  std::cout << "Faces: " << TF.rows() << " faces\n";
+  std::cout << "Number of Bone Segments: " << BE.rows() << " bones\n";
 
+  igl::readDMAT("../models/arm-weights.dmat", W);
   body = new pbcd::DeformableModel(TV, TF, C, BE, W);
 
   gravity.resizeLike(body->positions());
   gravity.setZero();
   gravity.col(1).array() -= 9.81;
+  gravity.row(10) = gravity.row(0) + gravity.row(1) + gravity.row(2);
 
-  std::cout << "The matrix m is of size "
-            << gravity.rows() << "x" << gravity.cols() << std::endl;
+  body->initDistanceConstraint(0.01f);
 
   std::vector<RotationList>
       poses;
@@ -133,7 +139,9 @@ int main(int argc, char *argv[])
 
   // Plot the mesh with pseudocolors
   igl::opengl::glfw::Viewer viewer;
-  viewer.data().set_mesh(body->positions(), body->faces());
+
+  viewer.data()
+      .set_mesh(body->positions(), body->faces());
   viewer.data().set_edges(body->bonePositions(), body->boneEdges(), sea_green);
   viewer.data().compute_normals();
   viewer.data().show_lines = false;

@@ -18,7 +18,8 @@ PRIVATE
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/DeformableModel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/Solver.cpp
- #   ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/DistanceConstraint.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/DistanceConstraint.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pbcd/VolumeConstraint.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)

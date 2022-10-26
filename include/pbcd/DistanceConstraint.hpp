@@ -19,7 +19,7 @@ namespace pbcd
 
         virtual double evaluate(const Eigen::MatrixXd &positions, const Eigen::VectorXd &masses) const override;
 
-        virtual void project(const Eigen::MatrixXd &positions, const Eigen::VectorXd &masses, double &langrange_multiplier, const double dt) const override;
+        virtual void project(Eigen::MatrixXd &positions, const Eigen::VectorXd &masses, double &langrange_multiplier, const double dt) const override;
 
     private:
         double m_rest_distance;

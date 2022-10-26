@@ -49,4 +49,32 @@ namespace pbcd
     void DeformableModel::tetrahedralize()
     {
     }
+
+    void DeformableModel::initDistanceConstraint(double compliance)
+    {
+        auto const &positions = this->positions();
+        auto const &elements = this->faces();
+
+        Eigen::MatrixXi E;
+        igl::edges(elements, E);
+
+        for (auto i = 0u; i < E.rows(); ++i)
+        {
+            auto const edge = E.row(i);
+            auto const e0 = edge(0);
+            auto const e1 = edge(1);
+            std::vector<int> indices = {e0, e1};
+            auto constraint = std::make_unique<DistanceConstraint>(
+                indices,
+                positions,
+                compliance);
+
+            this->constraints().push_back(std::move(constraint));
+        }
+    }
+
+    void DeformableModel::initVolumeConstraint(double compliance)
+    {
+    }
+
 }
